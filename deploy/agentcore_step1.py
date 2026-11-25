@@ -1,6 +1,6 @@
 """Step 1 on real AgentCore: an IAM-secured Gateway with a Policy Engine, one order tool, and the Cedar forbid.
 
-Run AFTER deploy.py and scenario.py (it needs supervisor-role and subagents-role). Region ap-southeast-2.
+Run AFTER deploy.py (it creates supervisor-role and subagents-role itself if they are missing). Region ap-southeast-2.
 It proves step 1 on its own: while supervisor-role still has full IAM rights, the Gateway refuses it,
 and subagents-role (the helpers) still gets through.   python deploy/agentcore_step1.py
 Writes agentcore_state.json and agentcore_results.json.
@@ -133,6 +133,11 @@ if not pr or pr["status"] != "ACTIVE":
 
 # ---- 5. callers: both roles may use the gateway at IAM level (so a denial can only be Cedar)
 for r in ("supervisor-role", "subagents-role"):
+    try:                                                                            # on a fresh account the demo roles do not exist yet
+        iam.create_role(RoleName=r, AssumeRolePolicyDocument=json.dumps({"Version": "2012-10-17", "Statement": [
+            {"Effect": "Allow", "Principal": {"AWS": f"arn:aws:iam::{acct}:root"}, "Action": "sts:AssumeRole"}]}))
+    except iam.exceptions.EntityAlreadyExistsException:
+        pass
     try:
         iam.delete_role_policy(RoleName=r, PolicyName="TourniquetQuarantine")      # undo any earlier role lock
     except iam.exceptions.NoSuchEntityException:

@@ -26,7 +26,10 @@ who = need("AWS credentials", lambda: s.client("sts").get_caller_identity(), "no
 if not who:
     sys.exit(1)
 acct = who["Account"]
-show("OK", "AWS credentials", who["Arn"].split("/")[-1] if "assumed-role" in who["Arn"] else who["Arn"])
+if who["Arn"].endswith(":root"):
+    show("FAIL", "you are signed in as the account root user", "AWS does not let root credentials assume roles, and the proof scripts do. Sign in as an IAM user or role with AdministratorAccess instead (IAM console > Users > Create user > attach AdministratorAccess), then open CloudShell as that user")
+else:
+    show("OK", "AWS credentials", who["Arn"].split("/")[-1] if "assumed-role" in who["Arn"] else who["Arn"])
 
 if tuple(int(x) for x in boto3.__version__.split(".")[:2]) < (1, 40):
     show("WARN", "boto3 is old", f"{boto3.__version__}; run: pip install -U boto3 (AgentCore calls need a recent version)")

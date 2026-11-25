@@ -106,6 +106,17 @@ Each cut closes a different door. Together they leave the agent with nothing to 
 | 2 | An agent role creates an access key | In the code; exercised by the scenario |
 | 4, 5, 6, 7 | Tool shift, gateway denies, prompt injection, manual | Experimental, not proven |
 
+## Before you start
+
+You need an AWS account and an **IAM user or role with AdministratorAccess**.
+
+> **Do not use the account root user.** AWS does not let root credentials assume roles, and the proof scripts assume the demo roles, so they fail with an `AccessDenied` error. `deploy/preflight.py` stops early and says so if it detects root. For a new account: IAM console, Users, Create user, attach `AdministratorAccess`, then sign in as that user and open CloudShell.
+
+Also:
+- **Region:** `ap-southeast-2` by default. Set `TQ_REGION` to use another region where Amazon Bedrock AgentCore is available.
+- **Bedrock model access (optional):** the Orchestrator uses an Anthropic model on Amazon Bedrock. On a new account, enable access in the Bedrock console (Model access, and the Anthropic use-case form). Without it everything still works, and the plan is made by plain rules and says so.
+- **Cost:** small. Delete everything afterwards with `python deploy/cleanup.py`.
+
 ## Try it
 
 ```bash

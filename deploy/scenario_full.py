@@ -74,12 +74,27 @@ import io, zipfile
 zb = io.BytesIO()
 with zipfile.ZipFile(zb, "w") as z:
     z.writestr("x.py", "def y(e, c):\n    return 'order tool'\n")
-iam.create_role(RoleName="order-tools-exec", AssumeRolePolicyDocument=json.dumps(TRUST_LAMBDA)) if "order-tools-exec" not in [r["RoleName"] for r in iam.list_roles()["Roles"]] else None
+try:
+    iam.get_role(RoleName="order-tools-exec")
+except iam.exceptions.NoSuchEntityException:
+    iam.create_role(RoleName="order-tools-exec", AssumeRolePolicyDocument=json.dumps(TRUST_LAMBDA))
 time.sleep(10)
-lam.create_function(FunctionName="order-tools", Runtime="python3.12", Handler="x.y", Code={"ZipFile": zb.getvalue()},
-                    Role=f"arn:aws:iam::{acct}:role/order-tools-exec")
-lam.create_function(FunctionName="tq-helper-agent", Runtime="python3.12", Handler="x.y", Code={"ZipFile": zb.getvalue()},
-                    Role=f"arn:aws:iam::{acct}:role/order-tools-exec")     # a stand-in "other agent" the supervisor calls
+
+
+def _create_fn(name):
+    """A brand-new IAM role can take a while to become usable by Lambda: retry for up to ~2 minutes."""
+    for attempt in range(24):
+        try:
+            return lam.create_function(FunctionName=name, Runtime="python3.12", Handler="x.y", Code={"ZipFile": zb.getvalue()},
+                                       Role=f"arn:aws:iam::{acct}:role/order-tools-exec")
+        except lam.exceptions.InvalidParameterValueException as e:
+            if "cannot be assumed" not in str(e) or attempt == 23:
+                raise
+            time.sleep(5)
+
+
+_create_fn("order-tools")
+_create_fn("tq-helper-agent")     # a stand-in "other agent" the supervisor calls
 for _fn in ("order-tools", "tq-helper-agent"):       # a new Lambda is Pending for a moment; calling it too early fails
     lam.get_waiter("function_active_v2").wait(FunctionName=_fn)
 

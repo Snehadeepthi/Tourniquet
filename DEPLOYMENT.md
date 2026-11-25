@@ -4,7 +4,7 @@ Tested in AWS CloudShell, region `ap-southeast-2`. Everything is created in one 
 
 ## Prerequisites
 
-1. An AWS account where you can create IAM roles, Lambda, Step Functions, DynamoDB, API Gateway, S3 and CloudFormation (an admin role is simplest).
+1. An AWS account and an **IAM user or role with AdministratorAccess**. Do not use the account root user: AWS does not let root credentials assume roles, and the proof scripts assume the demo roles. (A new account: IAM console, Users, Create user, attach AdministratorAccess, then sign in as that user.)
 2. **CloudTrail** management events on (the default trail is enough). Tourniquet reads `CreateAccessKey` and `GetSecretValue` from it.
 3. **Amazon Bedrock AgentCore** available in the region (used by the proof scripts for the Gateway, Cedar policy and Runtime).
 4. **Bedrock model access** for the Orchestrator (optional). Submit the Anthropic use-case form once in the Bedrock console. Without it the Orchestrator falls back to rules and says so in the plan.
@@ -88,6 +88,7 @@ This deletes the evidence too. Save `results/` and anything you want to keep fir
 
 | Symptom | Likely cause and fix |
 |---|---|
+| `AccessDenied` on AssumeRole, or preflight says you are root | Sign in as an IAM user or role with AdministratorAccess, not the root user |
 | `AccessDenied` or profile errors | Run `unset AWS_PROFILE` in CloudShell, or set `AWS_PROFILE` to a profile with admin rights |
 | Plan says it was made by rules, not Bedrock | `TQ_MODEL` unset or the model use-case form not submitted; run `pick_model.py` |
 | Stack create fails on a bucket name | Bucket names are `tq-code-<account>` and `tq-audit-<account>`; a leftover bucket from an earlier install must be emptied or reused |
