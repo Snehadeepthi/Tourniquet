@@ -1,0 +1,180 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Tourniquet slice, layer 1 (design only until it has run on real AWS)
+Parameters:
+  CodeBucket: {Type: String}
+  CodeKey: {Type: String, Default: tq-code.zip}
+  AuditBucketName: {Type: String}
+  OrchestratorModel: {Type: String, Default: ""}   # Bedrock model or inference-profile id for the Orchestrator; empty = rule-based plan
+  Approvers: {Type: String, Default: "tq-demo-sec-lead"}   # comma-separated IAM role names (or full session ARNs) who may approve and lift
+  ActNarrow: {Type: String, Default: "false", AllowedValues: ["true", "false"]}   # true: exact AgentCore permissions instead of bedrock-agentcore:*
+Conditions:
+  IsNarrow: !Equals [!Ref ActNarrow, "true"]
+Resources:
+  Alerts:    {Type: "AWS::DynamoDB::Table", Properties: {TableName: tq-alerts,    BillingMode: PAY_PER_REQUEST, AttributeDefinitions: [{AttributeName: alert_id, AttributeType: S}],      KeySchema: [{AttributeName: alert_id, KeyType: HASH}]}}
+  Sessions:  {Type: "AWS::DynamoDB::Table", Properties: {TableName: tq-sessions,  BillingMode: PAY_PER_REQUEST, AttributeDefinitions: [{AttributeName: access_key_id, AttributeType: S}], KeySchema: [{AttributeName: access_key_id, KeyType: HASH}]}}
+  Reach:     {Type: "AWS::DynamoDB::Table", Properties: {TableName: tq-reach,     BillingMode: PAY_PER_REQUEST, AttributeDefinitions: [{AttributeName: role_name, AttributeType: S}],  KeySchema: [{AttributeName: role_name, KeyType: HASH}]}}
+  Signals:   {Type: "AWS::DynamoDB::Table", Properties: {TableName: tq-signals,   BillingMode: PAY_PER_REQUEST, AttributeDefinitions: [{AttributeName: signal_id, AttributeType: S}],  KeySchema: [{AttributeName: signal_id, KeyType: HASH}]}}
+  Approvals: {Type: "AWS::DynamoDB::Table", Properties: {TableName: tq-approvals, BillingMode: PAY_PER_REQUEST, AttributeDefinitions: [{AttributeName: plan_id, AttributeType: S}],   KeySchema: [{AttributeName: plan_id, KeyType: HASH}]}}
+  Seen:      {Type: "AWS::DynamoDB::Table", Properties: {TableName: tq-seen,      BillingMode: PAY_PER_REQUEST, AttributeDefinitions: [{AttributeName: event_id, AttributeType: S}],   KeySchema: [{AttributeName: event_id, KeyType: HASH}]}}
+  Baselines: {Type: "AWS::DynamoDB::Table", Properties: {TableName: tq-baselines, BillingMode: PAY_PER_REQUEST, AttributeDefinitions: [{AttributeName: k, AttributeType: S}], KeySchema: [{AttributeName: k, KeyType: HASH}], TimeToLiveSpecification: {AttributeName: expires, Enabled: true}}}
+  AuditBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref AuditBucketName
+      ObjectLockEnabled: true
+      ObjectLockConfiguration: {ObjectLockEnabled: Enabled, Rule: {DefaultRetention: {Mode: GOVERNANCE, Days: 1}}}
+      VersioningConfiguration: {Status: Enabled}
+  ControlRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: tq-control-role
+      AssumeRolePolicyDocument: {Version: "2012-10-17", Statement: [{Effect: Allow, Principal: {Service: lambda.amazonaws.com}, Action: "sts:AssumeRole"}]}
+      ManagedPolicyArns: ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
+      Policies:
+        - PolicyName: tq-control
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - {Effect: Allow, Action: ["dynamodb:GetItem","dynamodb:PutItem","dynamodb:UpdateItem","dynamodb:Scan"], Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/tq-*"}
+              - {Effect: Allow, Action: ["s3:PutObject","s3:GetObject","s3:ListBucket"], Resource: [!GetAtt AuditBucket.Arn, !Sub "${AuditBucket.Arn}/*"]}
+              - {Effect: Allow, Action: ["states:SendTaskSuccess"], Resource: "*"}
+              - {Effect: Allow, Action: ["cloudtrail:LookupEvents"], Resource: "*"}
+              - {Effect: Allow, Action: ["bedrock:InvokeModel"], Resource: "*"}      # the Orchestrator (tq-plan) calls a Bedrock model
+              - {Effect: Allow, Action: ["aws-marketplace:ViewSubscriptions","aws-marketplace:Subscribe"], Resource: "*"}   # first call to a serverless Anthropic model enables it for the account
+  ActRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: tq-act-role
+      AssumeRolePolicyDocument: {Version: "2012-10-17", Statement: [{Effect: Allow, Principal: {Service: lambda.amazonaws.com}, Action: "sts:AssumeRole"}]}
+      ManagedPolicyArns: ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
+      Policies:
+        - PolicyName: tq-act
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - {Effect: Allow, Action: ["dynamodb:GetItem","dynamodb:PutItem","dynamodb:UpdateItem","dynamodb:Scan"], Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/tq-*"}
+              - {Effect: Allow, Action: ["s3:PutObject","s3:GetObject","s3:ListBucket"], Resource: [!GetAtt AuditBucket.Arn, !Sub "${AuditBucket.Arn}/*"]}
+              # Narrow on purpose: only the stand-in agent role, its keys' users and its tool Lambda.
+              - {Effect: Allow, Action: ["iam:PutRolePolicy"], Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/supervisor-role"}
+              - {Effect: Allow, Action: ["iam:UpdateAccessKey"], Resource: !Sub "arn:aws:iam::${AWS::AccountId}:user/backdoor-user"}
+              # ActNarrow=true: only what the run used, on this account's tq gateway and engine. ActNarrow=false: broad.
+              - Fn::If:
+                  - IsNarrow
+                  - {Effect: Allow, Action: ["bedrock-agentcore:CreatePolicy","bedrock-agentcore:GetPolicy","bedrock-agentcore:DeletePolicy","bedrock-agentcore:GetPolicyEngine","bedrock-agentcore:ManageAdminPolicy","bedrock-agentcore:ManageResourceScopedPolicy","bedrock-agentcore:GetGateway","bedrock-agentcore:GetGatewayTarget","bedrock-agentcore:InvokeGateway"], Resource: [!Sub "arn:aws:bedrock-agentcore:${AWS::Region}:${AWS::AccountId}:gateway/tq-gateway-*", !Sub "arn:aws:bedrock-agentcore:${AWS::Region}:${AWS::AccountId}:policy-engine/tq_engine-*"]}
+                  - {Effect: Allow, Action: ["bedrock-agentcore:*"], Resource: "*"}
+              - {Effect: Allow, Action: ["bedrock-agentcore:ListPolicies","bedrock-agentcore:ListGateways","bedrock-agentcore:ListGatewayTargets"], Resource: "*"}
+              - {Effect: Allow, Action: ["iam:DeleteRolePolicy"], Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/supervisor-role"}
+              - {Effect: Allow, Action: ["lambda:DeleteFunctionConcurrency"], Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:order-tools"}
+              - {Effect: Allow, Action: ["lambda:PutFunctionConcurrency"], Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:order-tools"}
+              # Steps 2 and 8: only the demo secrets (name prefix tq-demo/). Step 4: stop sessions of Runtime agents named tq_*.
+              - {Effect: Allow, Action: ["secretsmanager:GetResourcePolicy","secretsmanager:PutResourcePolicy","secretsmanager:DeleteResourcePolicy","secretsmanager:PutSecretValue","secretsmanager:DescribeSecret","secretsmanager:UpdateSecretVersionStage"], Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:tq-demo/*"}
+              - {Effect: Allow, Action: ["bedrock-agentcore:StopRuntimeSession"], Resource: !Sub "arn:aws:bedrock-agentcore:${AWS::Region}:${AWS::AccountId}:runtime/tq_*"}
+              - {Effect: Allow, Action: ["sts:GetCallerIdentity"], Resource: "*"}
+  FnDetect:   {Type: "AWS::Lambda::Function", Properties: {FunctionName: tq-detect,   Runtime: python3.12, Handler: tourniquet_slice.handlers.detect,           Role: !GetAtt ControlRole.Arn, Timeout: 30, Environment: {Variables: {TQ_AUDIT_BUCKET: !Ref AuditBucketName}}, Code: {S3Bucket: !Ref CodeBucket, S3Key: !Ref CodeKey}}}
+  FnCloudTrail: {Type: "AWS::Lambda::Function", Properties: {FunctionName: tq-read-cloudtrail, Runtime: python3.12, Handler: tourniquet_slice.handlers.read_cloudtrail, Role: !GetAtt ControlRole.Arn, Timeout: 60, Environment: {Variables: {TQ_AUDIT_BUCKET: !Ref AuditBucketName}}, Code: {S3Bucket: !Ref CodeBucket, S3Key: !Ref CodeKey}}}
+  FnMatch:    {Type: "AWS::Lambda::Function", Properties: {FunctionName: tq-match,    Runtime: python3.12, Handler: tourniquet_slice.handlers.match,            Role: !GetAtt ControlRole.Arn, Timeout: 30, Environment: {Variables: {TQ_AUDIT_BUCKET: !Ref AuditBucketName}}, Code: {S3Bucket: !Ref CodeBucket, S3Key: !Ref CodeKey}}}
+  FnPlan:     {Type: "AWS::Lambda::Function", Properties: {FunctionName: tq-plan,     Runtime: python3.12, Handler: tourniquet_slice.handlers.plan,             Role: !GetAtt ControlRole.Arn, Timeout: 90, Environment: {Variables: {TQ_AUDIT_BUCKET: !Ref AuditBucketName, TQ_MODEL: !Ref OrchestratorModel}}, Code: {S3Bucket: !Ref CodeBucket, S3Key: !Ref CodeKey}}}
+  FnRequest:  {Type: "AWS::Lambda::Function", Properties: {FunctionName: tq-request-approval, Runtime: python3.12, Handler: tourniquet_slice.handlers.request_approval, Role: !GetAtt ControlRole.Arn, Timeout: 30, Environment: {Variables: {TQ_AUDIT_BUCKET: !Ref AuditBucketName}}, Code: {S3Bucket: !Ref CodeBucket, S3Key: !Ref CodeKey}}}
+  FnExpire:   {Type: "AWS::Lambda::Function", Properties: {FunctionName: tq-expire,   Runtime: python3.12, Handler: tourniquet_slice.handlers.expire,           Role: !GetAtt ControlRole.Arn, Timeout: 30, Environment: {Variables: {TQ_AUDIT_BUCKET: !Ref AuditBucketName}}, Code: {S3Bucket: !Ref CodeBucket, S3Key: !Ref CodeKey}}}
+  FnPlans:    {Type: "AWS::Lambda::Function", Properties: {FunctionName: tq-plans,    Runtime: python3.12, Handler: tourniquet_slice.handlers.plans,            Role: !GetAtt ControlRole.Arn, Timeout: 20, Environment: {Variables: {TQ_AUDIT_BUCKET: !Ref AuditBucketName}}, Code: {S3Bucket: !Ref CodeBucket, S3Key: !Ref CodeKey}}}
+  FnGuard:    {Type: "AWS::Lambda::Function", Properties: {FunctionName: tq-guard,    Runtime: python3.12, Handler: tourniquet_slice.handlers.guard,            Role: !GetAtt GuardRole.Arn,   Timeout: 30, Environment: {Variables: {TQ_AUDIT_BUCKET: !Ref AuditBucketName}}, Code: {S3Bucket: !Ref CodeBucket, S3Key: !Ref CodeKey}}}
+  GuardRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: tq-guard-role
+      AssumeRolePolicyDocument: {Version: "2012-10-17", Statement: [{Effect: Allow, Principal: {Service: lambda.amazonaws.com}, Action: "sts:AssumeRole"}]}
+      ManagedPolicyArns: ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
+      Policies:
+        - PolicyName: tq-guard
+          PolicyDocument: {Version: "2012-10-17", Statement: [{Effect: Allow, Action: ["bedrock:ApplyGuardrail"], Resource: !Sub "arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:guardrail/*"}]}
+  FnApprove:  {Type: "AWS::Lambda::Function", Properties: {FunctionName: tq-approve,  Runtime: python3.12, Handler: tourniquet_slice.handlers.approve,          Role: !GetAtt ControlRole.Arn, Timeout: 30, Environment: {Variables: {TQ_AUDIT_BUCKET: !Ref AuditBucketName, TQ_APPROVERS: !Ref Approvers}}, Code: {S3Bucket: !Ref CodeBucket, S3Key: !Ref CodeKey}}}
+  FnAct:      {Type: "AWS::Lambda::Function", Properties: {FunctionName: tq-act,      Runtime: python3.12, Handler: tourniquet_slice.handlers.act,              Role: !GetAtt ActRole.Arn,     Timeout: 300, Environment: {Variables: {TQ_AUDIT_BUCKET: !Ref AuditBucketName}}, Code: {S3Bucket: !Ref CodeBucket, S3Key: !Ref CodeKey}}}
+  FnLift:     {Type: "AWS::Lambda::Function", Properties: {FunctionName: tq-lift,     Runtime: python3.12, Handler: tourniquet_slice.handlers.lift,             Role: !GetAtt ActRole.Arn,     Timeout: 300, Environment: {Variables: {TQ_AUDIT_BUCKET: !Ref AuditBucketName, TQ_APPROVERS: !Ref Approvers}}, Code: {S3Bucket: !Ref CodeBucket, S3Key: !Ref CodeKey}}}
+  # Approve and lift come through an API Gateway HTTP API with IAM auth. API Gateway checks the SigV4 signature and
+  # hands the verified caller ARN to the Lambda. Approvers get execute-api:Invoke on these two routes only and must
+  # NOT hold lambda:InvokeFunction on tq-approve / tq-lift, because a direct invoke could carry a made-up caller.
+  Api:        {Type: "AWS::ApiGatewayV2::Api", Properties: {Name: tq-approvals-api, ProtocolType: HTTP}}
+  ApiStage:   {Type: "AWS::ApiGatewayV2::Stage", Properties: {ApiId: !Ref Api, StageName: "$default", AutoDeploy: true}}
+  ApproveInt: {Type: "AWS::ApiGatewayV2::Integration", Properties: {ApiId: !Ref Api, IntegrationType: AWS_PROXY, IntegrationUri: !GetAtt FnApprove.Arn, PayloadFormatVersion: "2.0"}}
+  LiftInt:    {Type: "AWS::ApiGatewayV2::Integration", Properties: {ApiId: !Ref Api, IntegrationType: AWS_PROXY, IntegrationUri: !GetAtt FnLift.Arn, PayloadFormatVersion: "2.0"}}
+  PlansInt:   {Type: "AWS::ApiGatewayV2::Integration", Properties: {ApiId: !Ref Api, IntegrationType: AWS_PROXY, IntegrationUri: !GetAtt FnPlans.Arn, PayloadFormatVersion: "2.0"}}
+  PlansRoute: {Type: "AWS::ApiGatewayV2::Route", Properties: {ApiId: !Ref Api, RouteKey: "GET /plans", AuthorizationType: AWS_IAM, Target: !Sub "integrations/${PlansInt}"}}
+  PlansPermission: {Type: "AWS::Lambda::Permission", Properties: {Action: "lambda:InvokeFunction", FunctionName: !Ref FnPlans, Principal: apigateway.amazonaws.com, SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/*/GET/plans"}}
+  ApproveRoute: {Type: "AWS::ApiGatewayV2::Route", Properties: {ApiId: !Ref Api, RouteKey: "POST /approve", AuthorizationType: AWS_IAM, Target: !Sub "integrations/${ApproveInt}"}}
+  LiftRoute:  {Type: "AWS::ApiGatewayV2::Route", Properties: {ApiId: !Ref Api, RouteKey: "POST /lift", AuthorizationType: AWS_IAM, Target: !Sub "integrations/${LiftInt}"}}
+  ApprovePermission: {Type: "AWS::Lambda::Permission", Properties: {Action: "lambda:InvokeFunction", FunctionName: !Ref FnApprove, Principal: apigateway.amazonaws.com, SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/*/POST/approve"}}
+  LiftPermission: {Type: "AWS::Lambda::Permission", Properties: {Action: "lambda:InvokeFunction", FunctionName: !Ref FnLift, Principal: apigateway.amazonaws.com, SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/*/POST/lift"}}
+  PollRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: tq-poll-role
+      AssumeRolePolicyDocument: {Version: "2012-10-17", Statement: [{Effect: Allow, Principal: {Service: lambda.amazonaws.com}, Action: "sts:AssumeRole"}]}
+      ManagedPolicyArns: ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
+      Policies:
+        - PolicyName: tq-poll
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - {Effect: Allow, Action: ["dynamodb:GetItem","dynamodb:PutItem"], Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/tq-seen"}
+              - {Effect: Allow, Action: ["dynamodb:GetItem","dynamodb:PutItem","dynamodb:UpdateItem"], Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/tq-baselines"}
+              - {Effect: Allow, Action: ["s3:PutObject","s3:GetObject","s3:ListBucket"], Resource: [!GetAtt AuditBucket.Arn, !Sub "${AuditBucket.Arn}/*"]}
+              - {Effect: Allow, Action: ["cloudtrail:LookupEvents"], Resource: "*"}
+              - {Effect: Allow, Action: ["states:StartExecution"], Resource: !Ref Machine}
+  FnPoll:     {Type: "AWS::Lambda::Function", Properties: {FunctionName: tq-poll,     Runtime: python3.12, Handler: tourniquet_slice.handlers.poll,             Role: !GetAtt PollRole.Arn,    Timeout: 120, Environment: {Variables: {TQ_AUDIT_BUCKET: !Ref AuditBucketName, STATE_MACHINE_ARN: !Ref Machine}}, Code: {S3Bucket: !Ref CodeBucket, S3Key: !Ref CodeKey}}}
+  PollRule:   {Type: "AWS::Events::Rule", Properties: {Name: tq-poll-every-minute, ScheduleExpression: "rate(1 minute)", State: ENABLED, Targets: [{Id: poll, Arn: !GetAtt FnPoll.Arn}]}}
+  PollPermission: {Type: "AWS::Lambda::Permission", Properties: {Action: "lambda:InvokeFunction", FunctionName: !Ref FnPoll, Principal: events.amazonaws.com, SourceArn: !GetAtt PollRule.Arn}}
+  SfnRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: tq-sfn-role
+      AssumeRolePolicyDocument: {Version: "2012-10-17", Statement: [{Effect: Allow, Principal: {Service: states.amazonaws.com}, Action: "sts:AssumeRole"}]}
+      Policies:
+        - PolicyName: invoke
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - {Effect: Allow, Action: "lambda:InvokeFunction", Resource: [!GetAtt FnDetect.Arn, !GetAtt FnMatch.Arn, !GetAtt FnPlan.Arn, !GetAtt FnRequest.Arn, !GetAtt FnAct.Arn, !GetAtt FnExpire.Arn]}
+  Machine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: tq-contain
+      RoleArn: !GetAtt SfnRole.Arn
+      DefinitionString: !Sub |
+        {"StartAt":"Detect","States":{
+          "Detect":{"Type":"Task","Resource":"${FnDetect.Arn}","ResultPath":"$.d","Retry":[{"ErrorEquals":["States.ALL"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":1.7,"JitterStrategy":"FULL"}],"Next":"HasSignal"},
+          "HasSignal":{"Type":"Choice","Choices":[{"Variable":"$.d.signal","IsNull":false,"Next":"Match"}],"Default":"NothingToDo"},
+          "Match":{"Type":"Task","Resource":"${FnMatch.Arn}","Parameters":{"signal.$":"$.d.signal"},"ResultPath":"$.m","Retry":[{"ErrorEquals":["States.ALL"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":1.7,"JitterStrategy":"FULL"}],"Next":"HasAlert"},
+          "HasAlert":{"Type":"Choice","Choices":[{"Variable":"$.m.alert","IsNull":false,"Next":"IsHigh"}],"Default":"NoMatchNothingCut"},
+          "IsHigh":{"Type":"Choice","Choices":[{"Variable":"$.m.alert.level","StringEquals":"High","Next":"Plan"}],"Default":"RecordedBelowHigh"},
+          "Plan":{"Type":"Task","Resource":"${FnPlan.Arn}","Parameters":{"alert.$":"$.m.alert","run.$":"$$.Execution.Name"},"ResultPath":"$.p","Retry":[{"ErrorEquals":["States.ALL"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":1.7,"JitterStrategy":"FULL"}],"Next":"HasPlan"},
+          "HasPlan":{"Type":"Choice","Choices":[{"Variable":"$.p.plan","IsNull":false,"Next":"WaitForApproval"}],"Default":"AlreadyPlanned"},
+          "WaitForApproval":{"Type":"Task","Resource":"arn:aws:states:::lambda:invoke.waitForTaskToken",
+            "Parameters":{"FunctionName":"${FnRequest.Arn}","Payload":{"plan.$":"$.p.plan","token.$":"$$.Task.Token"}},
+            "ResultPath":"$.approvalResult","TimeoutSeconds":86400,"Catch":[{"ErrorEquals":["States.Timeout"],"ResultPath":"$.err","Next":"Expire"}],"Next":"Act"},
+          "Expire":{"Type":"Task","Resource":"${FnExpire.Arn}","Parameters":{"p.$":"$.p"},"End":true},
+          "Act":{"Type":"Task","Resource":"${FnAct.Arn}","Parameters":{"plan.$":"$.p.plan","approval.$":"$.approvalResult.approval"},"End":true},
+          "NothingToDo":{"Type":"Succeed"},"AlreadyPlanned":{"Type":"Succeed"},"RecordedBelowHigh":{"Type":"Succeed"},"NoMatchNothingCut":{"Type":"Succeed"}}}
+  # GuardDuty findings start the same pipeline (a finding about an assumed role becomes a type 5 signal).
+  GuardDutyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: tq-guardduty-events-role
+      AssumeRolePolicyDocument: {Version: "2012-10-17", Statement: [{Effect: Allow, Principal: {Service: events.amazonaws.com}, Action: "sts:AssumeRole"}]}
+      Policies:
+        - PolicyName: start
+          PolicyDocument: {Version: "2012-10-17", Statement: [{Effect: Allow, Action: "states:StartExecution", Resource: !Ref Machine}]}
+  GuardDutyRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: tq-guardduty-findings
+      State: ENABLED
+      EventPattern: {source: ["aws.guardduty"], "detail-type": ["GuardDuty Finding"]}
+      Targets:
+        - Id: machine
+          Arn: !Ref Machine
+          RoleArn: !GetAtt GuardDutyRole.Arn
+          InputTransformer:
+            InputPathsMap: {detail: "$.detail"}
+            InputTemplate: '{"record":{"source":"aws.guardduty","detail-type":"GuardDuty Finding","detail":<detail>}}'
+Outputs:
+  ApiUrl: {Value: !GetAtt Api.ApiEndpoint}

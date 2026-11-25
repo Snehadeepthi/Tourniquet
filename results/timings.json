@@ -1,0 +1,32 @@
+[
+ {
+  "key": "real_event_to_cut_done_s",
+  "metric": "Real event to cut done",
+  "seconds": 205.3,
+  "note": "CloudTrail delay, poll and pipeline, then approval and the cut. Approval was scripted, so a person's time is not included."
+ },
+ {
+  "key": "real_event_to_plan_waiting_s",
+  "metric": "Real event to plan waiting",
+  "seconds": 108.5,
+  "note": "CloudTrail delivery plus the one-minute poll plus the pipeline"
+ },
+ {
+  "key": "pipeline_start_to_plan_waiting_s",
+  "metric": "Pipeline start to plan waiting",
+  "seconds": 11.1,
+  "note": "Detect, match, Bedrock plan, request approval"
+ },
+ {
+  "key": "approval_to_cut_done_s",
+  "metric": "Approval to cut done",
+  "seconds": 81.9,
+  "note": "Steps 1 to 7 across Cedar validation, IAM, Lambda, vault and Runtime"
+ },
+ {
+  "key": "lift_call_s",
+  "metric": "Lift call",
+  "seconds": 7.2,
+  "note": "Undo of steps 1, 2, 3, 5, 6"
+ }
+]

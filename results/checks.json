@@ -1,0 +1,464 @@
+[
+ {
+  "n": 1,
+  "stage": "Step 1: Gateway (agentcore_step1.py)",
+  "check": "AgentCore policy engine is ACTIVE",
+  "result": "PASS"
+ },
+ {
+  "n": 2,
+  "stage": "Step 1: Gateway (agentcore_step1.py)",
+  "check": "Gateway is READY with the engine in ENFORCE mode",
+  "result": "PASS"
+ },
+ {
+  "n": 3,
+  "stage": "Step 1: Gateway (agentcore_step1.py)",
+  "check": "Order tool target is READY",
+  "result": "PASS"
+ },
+ {
+  "n": 4,
+  "stage": "Step 1: Gateway (agentcore_step1.py)",
+  "check": "Permit policy accepted by AgentCore validation",
+  "result": "PASS"
+ },
+ {
+  "n": 5,
+  "stage": "Step 1: Gateway (agentcore_step1.py)",
+  "check": "Before: supervisor-agent can place an order through the gateway",
+  "result": "PASS"
+ },
+ {
+  "n": 6,
+  "stage": "Step 1: Gateway (agentcore_step1.py)",
+  "check": "Before: helper agents can place an order too",
+  "result": "PASS"
+ },
+ {
+  "n": 7,
+  "stage": "Step 1: Gateway (agentcore_step1.py)",
+  "check": "Cedar forbid accepted in the exact-pattern form (broader forms refused)",
+  "result": "PASS"
+ },
+ {
+  "n": 8,
+  "stage": "Step 1: Gateway (agentcore_step1.py)",
+  "check": "After: the same supervisor session is refused by the gateway (its IAM rights untouched)",
+  "result": "PASS"
+ },
+ {
+  "n": 9,
+  "stage": "Step 1: Gateway (agentcore_step1.py)",
+  "check": "After: helper agents still get through",
+  "result": "PASS"
+ },
+ {
+  "n": 10,
+  "stage": "Step 1: Gateway (agentcore_step1.py)",
+  "check": "After: the forbidden tool is hidden from the supervisor's tool list",
+  "result": "PASS"
+ },
+ {
+  "n": 11,
+  "stage": "Step 1: Gateway (agentcore_step1.py)",
+  "check": "After: helpers still see the tool",
+  "result": "PASS"
+ },
+ {
+  "n": 12,
+  "stage": "Step 4: Runtime session (runtime_step4.py)",
+  "check": "The Runtime agent is READY",
+  "result": "PASS"
+ },
+ {
+  "n": 13,
+  "stage": "Step 4: Runtime session (runtime_step4.py)",
+  "check": "A live session keeps state between calls (1, 2, 3)",
+  "result": "PASS"
+ },
+ {
+  "n": 14,
+  "stage": "Step 4: Runtime session (runtime_step4.py)",
+  "check": "Step 4 stops the session",
+  "result": "PASS"
+ },
+ {
+  "n": 15,
+  "stage": "Step 4: Runtime session (runtime_step4.py)",
+  "check": "The same session id now starts from scratch (count 1)",
+  "result": "PASS"
+ },
+ {
+  "n": 16,
+  "stage": "Each cut alone (cuts_alone.py)",
+  "check": "Step 2 before: supervisor reads the secret",
+  "result": "PASS"
+ },
+ {
+  "n": 17,
+  "stage": "Each cut alone (cuts_alone.py)",
+  "check": "Step 2 alone: supervisor refused by the vault, no role lock",
+  "result": "PASS"
+ },
+ {
+  "n": 18,
+  "stage": "Each cut alone (cuts_alone.py)",
+  "check": "Step 2 alone: a helper still reads the secret",
+  "result": "PASS"
+ },
+ {
+  "n": 19,
+  "stage": "Each cut alone (cuts_alone.py)",
+  "check": "Step 2 undo: supervisor reads the secret again",
+  "result": "PASS"
+ },
+ {
+  "n": 20,
+  "stage": "Each cut alone (cuts_alone.py)",
+  "check": "Step 8 alone: the secret has a new value",
+  "result": "PASS"
+ },
+ {
+  "n": 21,
+  "stage": "Each cut alone (cuts_alone.py)",
+  "check": "Step 8 alone: old value is not AWSPREVIOUS any more",
+  "result": "PASS"
+ },
+ {
+  "n": 22,
+  "stage": "Each cut alone (cuts_alone.py)",
+  "check": "Step 8 alone: a helper reads the NEW value",
+  "result": "PASS"
+ },
+ {
+  "n": 23,
+  "stage": "Each cut alone (cuts_alone.py)",
+  "check": "Step 3 before: supervisor can call another agent",
+  "result": "PASS"
+ },
+ {
+  "n": 24,
+  "stage": "Each cut alone (cuts_alone.py)",
+  "check": "Step 3 alone: supervisor can no longer call another agent",
+  "result": "PASS"
+ },
+ {
+  "n": 25,
+  "stage": "Each cut alone (cuts_alone.py)",
+  "check": "Step 3 alone: supervisor can still read the secret",
+  "result": "PASS"
+ },
+ {
+  "n": 26,
+  "stage": "Each cut alone (cuts_alone.py)",
+  "check": "Step 3 undo: supervisor can call another agent again",
+  "result": "PASS"
+ },
+ {
+  "n": 27,
+  "stage": "Each cut alone (cuts_alone.py)",
+  "check": "Step 4 alone: the live Runtime session stopped and its state is gone",
+  "result": "PASS"
+ },
+ {
+  "n": 28,
+  "stage": "Setup and signals (scenario_full.py)",
+  "check": "Before: supervisor session works",
+  "result": "PASS"
+ },
+ {
+  "n": 29,
+  "stage": "Setup and signals (scenario_full.py)",
+  "check": "Before: helper session works",
+  "result": "PASS"
+ },
+ {
+  "n": 30,
+  "stage": "Setup and signals (scenario_full.py)",
+  "check": "Before: supervisor reads the vault secret",
+  "result": "PASS"
+ },
+ {
+  "n": 31,
+  "stage": "Setup and signals (scenario_full.py)",
+  "check": "Before: helper reads the vault secret",
+  "result": "PASS"
+ },
+ {
+  "n": 32,
+  "stage": "Setup and signals (scenario_full.py)",
+  "check": "Before: supervisor can call another agent",
+  "result": "PASS"
+ },
+ {
+  "n": 33,
+  "stage": "Setup and signals (scenario_full.py)",
+  "check": "Collector discovered the reach map (secret, shared role, tool Lambda, owner)",
+  "result": "PASS"
+ },
+ {
+  "n": 34,
+  "stage": "Setup and signals (scenario_full.py)",
+  "check": "Before: supervisor's Runtime session is live and holds state",
+  "result": "PASS"
+ },
+ {
+  "n": 35,
+  "stage": "Setup and signals (scenario_full.py)",
+  "check": "Signal 1: a real Bedrock Guardrail flagged the injected text",
+  "result": "PASS"
+ },
+ {
+  "n": 36,
+  "stage": "Setup and signals (scenario_full.py)",
+  "check": "Signal 2: a GuardDuty-shaped finding becomes a signal (GuardDuty itself not enabled)",
+  "result": "PASS"
+ },
+ {
+  "n": 37,
+  "stage": "Trigger and plan",
+  "check": "Poller started the pipeline from the real CloudTrail event; plan waiting for approval",
+  "result": "PASS"
+ },
+ {
+  "n": 38,
+  "stage": "Trigger and plan",
+  "check": "Approver data route lists the waiting plan for the security person",
+  "result": "PASS"
+ },
+ {
+  "n": 39,
+  "stage": "Trigger and plan",
+  "check": "Plan says who made it (Bedrock Orchestrator, with the safety floor) and why",
+  "result": "PASS"
+ },
+ {
+  "n": 40,
+  "stage": "Trigger and plan",
+  "check": "Run input is the real CloudTrail record",
+  "result": "PASS"
+ },
+ {
+  "n": 41,
+  "stage": "Approval",
+  "check": "A typed name is refused (no verified identity)",
+  "result": "PASS"
+ },
+ {
+  "n": 42,
+  "stage": "Approval",
+  "check": "An approver cannot call the Lambda directly",
+  "result": "PASS"
+ },
+ {
+  "n": 43,
+  "stage": "Approval",
+  "check": "A signed caller not on the approver list is refused",
+  "result": "PASS"
+ },
+ {
+  "n": 44,
+  "stage": "Approval",
+  "check": "The agent's owner is refused",
+  "result": "PASS"
+ },
+ {
+  "n": 45,
+  "stage": "Approval",
+  "check": "The Orchestrator's own identity is refused",
+  "result": "PASS"
+ },
+ {
+  "n": 46,
+  "stage": "Approval",
+  "check": "A security person approves",
+  "result": "PASS"
+ },
+ {
+  "n": 47,
+  "stage": "Approval",
+  "check": "Approval records the real IAM ARN of the approver",
+  "result": "PASS"
+ },
+ {
+  "n": 48,
+  "stage": "Approval",
+  "check": "Step Functions finished the cut",
+  "result": "PASS"
+ },
+ {
+  "n": 49,
+  "stage": "Cuts",
+  "check": "Old supervisor session is denied",
+  "result": "PASS"
+ },
+ {
+  "n": 50,
+  "stage": "Cuts",
+  "check": "A NEW supervisor session is denied too",
+  "result": "PASS"
+ },
+ {
+  "n": 51,
+  "stage": "Cuts",
+  "check": "Helpers keep running",
+  "result": "PASS"
+ },
+ {
+  "n": 52,
+  "stage": "Cuts",
+  "check": "Step 1: Cedar forbid is in the gateway engine",
+  "result": "PASS"
+ },
+ {
+  "n": 53,
+  "stage": "Cuts",
+  "check": "Key the agent created is Inactive",
+  "result": "PASS"
+ },
+ {
+  "n": 54,
+  "stage": "Cuts",
+  "check": "Tool Lambda concurrency is 0",
+  "result": "PASS"
+ },
+ {
+  "n": 55,
+  "stage": "Cuts",
+  "check": "Helper role has no quarantine policy",
+  "result": "PASS"
+ },
+ {
+  "n": 56,
+  "stage": "Cuts",
+  "check": "Step 2: vault secret has a deny for the supervisor",
+  "result": "PASS"
+ },
+ {
+  "n": 57,
+  "stage": "Cuts",
+  "check": "Step 8: left out by the Orchestrator, secret not rotated (proven alone)",
+  "result": "PASS"
+ },
+ {
+  "n": 58,
+  "stage": "Cuts",
+  "check": "Step 2: the supervisor cannot read the secret",
+  "result": "PASS"
+ },
+ {
+  "n": 59,
+  "stage": "Cuts",
+  "check": "Step 3: supervisor has the agent-calls cut policy",
+  "result": "PASS"
+ },
+ {
+  "n": 60,
+  "stage": "Cuts",
+  "check": "Step 4: Runtime session stopped, state gone",
+  "result": "PASS"
+ },
+ {
+  "n": 61,
+  "stage": "Undo",
+  "check": "Non-approver cannot lift",
+  "result": "PASS"
+ },
+ {
+  "n": 62,
+  "stage": "Undo",
+  "check": "Owner cannot lift",
+  "result": "PASS"
+ },
+ {
+  "n": 63,
+  "stage": "Undo",
+  "check": "Orchestrator cannot lift",
+  "result": "PASS"
+ },
+ {
+  "n": 64,
+  "stage": "Undo",
+  "check": "Security person lifts the cut",
+  "result": "PASS"
+ },
+ {
+  "n": 65,
+  "stage": "Undo",
+  "check": "Supervisor session works again",
+  "result": "PASS"
+ },
+ {
+  "n": 66,
+  "stage": "Undo",
+  "check": "Cedar forbid gone",
+  "result": "PASS"
+ },
+ {
+  "n": 67,
+  "stage": "Undo",
+  "check": "Vault deny gone, supervisor reads the secret again",
+  "result": "PASS"
+ },
+ {
+  "n": 68,
+  "stage": "Undo",
+  "check": "Agent-calls cut gone",
+  "result": "PASS"
+ },
+ {
+  "n": 69,
+  "stage": "Undo",
+  "check": "Secret unchanged (step 8 not in plan)",
+  "result": "PASS"
+ },
+ {
+  "n": 70,
+  "stage": "Undo",
+  "check": "Tool Lambda concurrency limit removed",
+  "result": "PASS"
+ },
+ {
+  "n": 71,
+  "stage": "Undo",
+  "check": "Created key stays Inactive on purpose",
+  "result": "PASS"
+ },
+ {
+  "n": 72,
+  "stage": "Undo",
+  "check": "Lifting again is refused",
+  "result": "PASS"
+ },
+ {
+  "n": 73,
+  "stage": "Load and failure (load_aws.py)",
+  "check": "24 simultaneous signals: no execution failed",
+  "result": "PASS"
+ },
+ {
+  "n": 74,
+  "stage": "Load and failure (load_aws.py)",
+  "check": "Exactly one Alert for the agent",
+  "result": "PASS"
+ },
+ {
+  "n": 75,
+  "stage": "Load and failure (load_aws.py)",
+  "check": "Every signal is evidence on that Alert (24 of 24)",
+  "result": "PASS"
+ },
+ {
+  "n": 76,
+  "stage": "Load and failure (load_aws.py)",
+  "check": "Exactly one plan waiting for approval",
+  "result": "PASS"
+ },
+ {
+  "n": 77,
+  "stage": "Load and failure (load_aws.py)",
+  "check": "Audit chain intact after the burst",
+  "result": "PASS"
+ }
+]

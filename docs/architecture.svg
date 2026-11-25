@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1420" viewBox="0 0 2200 1420" font-family="Arial, Helvetica, sans-serif">
+<defs><marker id="mw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ffffff"/></marker><marker id="mr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ff4d4d"/></marker><marker id="mc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1fb8c4"/></marker></defs>
+<rect width="2200" height="1420" fill="#141b26"/>
+<rect x="180" y="60" width="1980" height="1260" fill="none" stroke="#ffffff" stroke-width="3"/>
+<rect x="181" y="61" width="72" height="72" fill="#fff"/><text x="217" y="100" font-size="30" font-weight="700" fill="#111" text-anchor="middle">aws</text><path d="M196 110 Q217 122 238 110" stroke="#f90" stroke-width="3" fill="none"/>
+<text x="1200" y="40" font-size="24" font-weight="500" fill="#aab4c4" text-anchor="middle">Tourniquet: architecture on AWS · ap-southeast-2 · proven on real AWS, 24 Nov 2026</text>
+<rect x="268" y="84" width="1864" height="470" fill="none" stroke="#f2831f" stroke-width="3"/>
+<text x="293" y="125" font-size="30" font-weight="700" fill="#f2831f" text-anchor="start">Application</text>
+<text x="293" y="160" font-size="30" font-weight="700" fill="#f2831f" text-anchor="start">Plane</text>
+<g transform="translate(70,300)"><circle cx="38" cy="22" r="14" stroke="#fff" stroke-width="3.2" fill="none"/><path d="M10 68 C10 46 24 40 38 40 C52 40 66 46 66 68 Z" stroke="#fff" stroke-width="3.2" fill="none"/></g>
+<text x="108" y="406" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">Users</text>
+<text x="108" y="430" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">poisoned order</text>
+<polyline points="112,345 532,345" fill="none" stroke="#ffffff" stroke-width="2.6"  marker-end="url(#mw)"/>
+<rect x="480" y="100" width="540" height="430" fill="none" stroke="#1fb8c4" stroke-width="3" stroke-dasharray="9 6"/>
+<g transform="translate(492,110)" stroke="#1fb8c4" stroke-width="2.5" fill="none"><path d="M18 4 L34 12 V30 L18 38 L2 30 V12 Z"/></g>
+<text x="548" y="138" font-size="26" font-weight="500" fill="#ffffff" text-anchor="start">AgentCore Runtime</text>
+<g transform="translate(550,215)"><path d="M42 4 L76 22 V62 L42 80 L8 62 V22 Z" stroke="#1fb8c4" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M42 4 V80 M8 22 L76 62 M76 22 L8 62" stroke="#1fb8c4" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/><circle cx="42" cy="42" r="8" fill="#1fb8c4"/><circle cx="8" cy="22" r="5" fill="#1fb8c4"/><circle cx="76" cy="22" r="5" fill="#1fb8c4"/><circle cx="8" cy="62" r="5" fill="#1fb8c4"/><circle cx="76" cy="62" r="5" fill="#1fb8c4"/></g>
+<rect x="542" y="207" width="100" height="98" fill="none" stroke="#ff4d4d" stroke-width="3.5"/>
+<text x="592" y="329" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">Supervisor</text>
+<text x="592" y="355" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">Agent</text>
+<g transform="translate(850,215)"><path d="M42 4 L76 22 V62 L42 80 L8 62 V22 Z" stroke="#1fb8c4" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M42 4 V80 M8 22 L76 62 M76 22 L8 62" stroke="#1fb8c4" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/><circle cx="42" cy="42" r="8" fill="#1fb8c4"/><circle cx="8" cy="22" r="5" fill="#1fb8c4"/><circle cx="76" cy="22" r="5" fill="#1fb8c4"/><circle cx="8" cy="62" r="5" fill="#1fb8c4"/><circle cx="76" cy="62" r="5" fill="#1fb8c4"/></g>
+<text x="892" y="329" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">Helper</text>
+<text x="892" y="355" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">Agents</text>
+<rect x="610" y="480" width="28" height="28" fill="#ff4d4d"/><text x="624" y="502" font-size="19" font-weight="700" fill="#fff" text-anchor="middle">4</text>
+<text x="650" y="502" font-size="20" font-weight="400" fill="#aab4c4" text-anchor="start">Runtime sessions</text>
+<polyline points="648,257 828,257" fill="none" stroke="#1fb8c4" stroke-width="2.6"  marker-end="url(#mc)" marker-start="url(#mc)"/>
+<g><rect x="1180" y="300" width="84" height="84" fill="#8C4FFF"/><g transform="translate(1180,300)"><circle cx="42" cy="42" r="8" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18" cy="22" r="6" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="66" cy="22" r="6" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18" cy="62" r="6" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="66" cy="62" r="6" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M23 26 L36 37 M61 26 L48 37 M23 58 L36 47 M61 58 L48 47" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<text x="1222" y="416" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">AgentCore Gateway</text>
+<text x="1222" y="442" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">Cedar policy engine</text>
+<rect x="1162" y="282" width="28" height="28" fill="#ff4d4d"/><text x="1176" y="303" font-size="19" font-weight="700" fill="#fff" text-anchor="middle">1</text>
+<g><rect x="1420" y="300" width="84" height="84" fill="#ED7100"/><g transform="translate(1420,300)"><path d="M26 18 H36 L58 66 M45 44 L26 68" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<text x="1462" y="416" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">order-tools</text>
+<text x="1462" y="442" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">tool Lambda</text>
+<rect x="1402" y="282" width="28" height="28" fill="#ff4d4d"/><text x="1416" y="303" font-size="19" font-weight="700" fill="#fff" text-anchor="middle">5</text>
+<g><rect x="1660" y="300" width="84" height="84" fill="#DD344C"/><g transform="translate(1660,300)"><rect x="20" y="36" width="44" height="32" rx="4" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 36 V28 A14 14 0 0 1 56 28 V36" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="42" cy="52" r="4" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<text x="1702" y="416" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">Secrets Manager</text>
+<text x="1702" y="442" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">orders-db-password</text>
+<rect x="1642" y="282" width="28" height="28" fill="#ff4d4d"/><text x="1656" y="303" font-size="19" font-weight="700" fill="#fff" text-anchor="middle">2</text>
+<rect x="1672" y="282" width="28" height="28" fill="#ff4d4d"/><text x="1686" y="303" font-size="19" font-weight="700" fill="#fff" text-anchor="middle">8</text>
+<g><rect x="1900" y="300" width="84" height="84" fill="#DD344C"/><g transform="translate(1900,300)"><circle cx="36" cy="26" r="11" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 66 C14 50 24 44 36 44 C48 44 58 50 58 66 Z" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="52" y="44" width="20" height="14" rx="2" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<text x="1942" y="416" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">supervisor-role</text>
+<text x="1942" y="442" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">agent identity</text>
+<rect x="1882" y="282" width="28" height="28" fill="#ff4d4d"/><text x="1896" y="303" font-size="19" font-weight="700" fill="#fff" text-anchor="middle">3</text>
+<rect x="1912" y="282" width="28" height="28" fill="#ff4d4d"/><text x="1926" y="303" font-size="19" font-weight="700" fill="#fff" text-anchor="middle">6</text>
+<rect x="1942" y="282" width="28" height="28" fill="#ff4d4d"/><text x="1956" y="303" font-size="19" font-weight="700" fill="#fff" text-anchor="middle">7</text>
+<polyline points="1020,330 1180,330" fill="none" stroke="#ffffff" stroke-width="2.6"  marker-end="url(#mw)"/>
+<polyline points="1264,342 1420,342" fill="none" stroke="#ffffff" stroke-width="2.6"  marker-end="url(#mw)"/>
+<polyline points="1504,342 1660,342" fill="none" stroke="#ffffff" stroke-width="2.6"  marker-end="url(#mw)"/>
+<polyline points="1020,420 1100,420 1100,372 1180,372" fill="none" stroke="#ffffff" stroke-width="2.6"  marker-end="url(#mw)"/>
+<g><rect x="560" y="600" width="84" height="84" fill="#E7157B"/><g transform="translate(560,600)"><path d="M42 12 L68 27 V57 L42 72 L16 57 V27 Z" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="42" cy="42" r="6" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M42 36 V24 M47 45 L58 52 M37 45 L26 52" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<text x="602" y="716" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">Amazon EventBridge</text>
+<text x="602" y="742" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">every minute</text>
+<g><rect x="900" y="600" width="84" height="84" fill="#E7157B"/><g transform="translate(900,600)"><circle cx="38" cy="38" r="16" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M50 50 L64 64" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M30 34 H46 M30 42 H42" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<text x="942" y="716" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">AWS CloudTrail</text>
+<text x="942" y="742" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">GetSecretValue, CreateAccessKey</text>
+<g opacity="0.5"><rect x="1240" y="600" width="84" height="84" fill="#DD344C"/><g transform="translate(1240,600)"><path d="M42 12 L68 22 V44 C68 58 56 68 42 74 C28 68 16 58 16 44 V22 Z" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M30 42 L39 51 L56 32" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<rect x="1235" y="595" width="94" height="94" fill="none" stroke="#9aa5b5" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="1282" y="716" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">Amazon GuardDuty</text>
+<text x="1282" y="742" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">finding sent in (not enabled)</text>
+<polyline points="1942,384 1942,576 942,576 942,596" fill="none" stroke="#ffffff" stroke-width="2.6"  marker-end="url(#mw)"/>
+<text x="1500" y="566" font-size="18" font-weight="400" fill="#aab4c4" text-anchor="middle">API events</text>
+<polyline points="644,642 740,642 740,760" fill="none" stroke="#ffffff" stroke-width="2.6" />
+<polyline points="984,642 1140,642 1140,760" fill="none" stroke="#ffffff" stroke-width="2.6" />
+<polyline points="1324,642 1440,642 1440,760" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-dasharray="9 6" />
+<polyline points="1440,760 1140,760" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-dasharray="9 6" />
+<polyline points="1140,760 740,760" fill="none" stroke="#ffffff" stroke-width="2.6" />
+<polyline points="740,760 642,760 642,846" fill="none" stroke="#ffffff" stroke-width="2.6"  marker-end="url(#mw)"/>
+<text x="760" y="782" font-size="18" font-weight="400" fill="#aab4c4" text-anchor="start">signals into the pipeline</text>
+<rect x="268" y="790" width="1864" height="490" fill="none" stroke="#1fc9b5" stroke-width="3"/>
+<text x="293" y="832" font-size="30" font-weight="700" fill="#1fc9b5" text-anchor="start">Tourniquet</text>
+<text x="293" y="867" font-size="30" font-weight="700" fill="#1fc9b5" text-anchor="start">Control Plane</text>
+<g transform="translate(70,1010)"><circle cx="38" cy="22" r="14" stroke="#fff" stroke-width="3.2" fill="none"/><path d="M10 68 C10 46 24 40 38 40 C52 40 66 46 66 68 Z" stroke="#fff" stroke-width="3.2" fill="none"/></g>
+<text x="108" y="1116" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">Security approver</text>
+<text x="108" y="1140" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">verified IAM identity</text>
+<g><rect x="600" y="850" width="84" height="84" fill="#ED7100"/><g transform="translate(600,850)"><path d="M26 18 H36 L58 66 M45 44 L26 68" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<text x="642" y="966" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">tq-poll</text>
+<text x="642" y="992" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">counts secret reads</text>
+<g><rect x="920" y="850" width="84" height="84" fill="#E7157B"/><g transform="translate(920,850)"><rect x="30" y="14" width="24" height="16" rx="2" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="12" y="52" width="24" height="16" rx="2" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="48" y="52" width="24" height="16" rx="2" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M42 30 V42 M24 52 V42 H60 V52" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<text x="962" y="966" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">Step Functions</text>
+<text x="962" y="992" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">tq-contain</text>
+<g><rect x="1240" y="850" width="84" height="84" fill="#ED7100"/><g transform="translate(1240,850)"><path d="M26 18 H36 L58 66 M45 44 L26 68" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<text x="1282" y="966" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">Detect + Match</text>
+<text x="1282" y="992" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">one Alert per agent</text>
+<rect x="1490" y="820" width="230" height="230" fill="none" stroke="#1fb8c4" stroke-width="3" stroke-dasharray="9 6"/>
+<text x="1505" y="855" font-size="22" font-weight="500" fill="#ffffff" text-anchor="start">Amazon Bedrock</text>
+<g><rect x="1563" y="880" width="84" height="84" fill="#01A88D"/><g transform="translate(1563,880)"><path d="M42 12 L66 26 V54 L42 68 L18 54 V26 Z" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M42 12 V68 M18 26 L66 54 M66 26 L18 54" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="42" cy="40" r="5" fill="#fff"/></g></g>
+<text x="1605" y="996" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">Orchestrator</text>
+<text x="1605" y="1022" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">plan + safety floor</text>
+<g><rect x="600" y="1050" width="84" height="84" fill="#8C4FFF"/><g transform="translate(600,1050)"><rect x="22" y="16" width="40" height="52" rx="3" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 24 V60 M72 24 V60" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M36 34 L28 42 L36 50 M48 34 L56 42 L48 50" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<text x="642" y="1166" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">Amazon API Gateway</text>
+<text x="642" y="1192" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">IAM-signed approve / lift</text>
+<g><rect x="920" y="1050" width="84" height="84" fill="#ED7100"/><g transform="translate(920,1050)"><path d="M26 18 H36 L58 66 M45 44 L26 68" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<text x="962" y="1166" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">tq-act</text>
+<text x="962" y="1192" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">runs the cuts in parallel</text>
+<g><rect x="1240" y="1050" width="84" height="84" fill="#7AA116"/><g transform="translate(1240,1050)"><ellipse cx="42" cy="24" rx="22" ry="7" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 24 L26 62 A16 6 0 0 0 58 62 L64 24" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<text x="1282" y="1166" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">S3 Object Lock</text>
+<text x="1282" y="1192" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">hash-chained audit log</text>
+<rect x="1745" y="820" width="380" height="250" fill="none" stroke="#e03fd8" stroke-width="3" stroke-dasharray="9 6"/>
+<text x="1762" y="857" font-size="22" font-weight="500" fill="#ffffff" text-anchor="start">Amazon DynamoDB</text>
+<g><rect x="1795" y="890" width="84" height="84" fill="#C925D1"/><g transform="translate(1795,890)"><ellipse cx="42" cy="22" rx="20" ry="7" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 22 V58 A20 7 0 0 0 62 58 V22 M22 40 A20 7 0 0 0 62 40" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<text x="1837" y="1006" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">reach, alerts</text>
+<text x="1837" y="1032" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">signals</text>
+<g><rect x="1960" y="890" width="84" height="84" fill="#C925D1"/><g transform="translate(1960,890)"><ellipse cx="42" cy="22" rx="20" ry="7" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 22 V58 A20 7 0 0 0 62 58 V22 M22 40 A20 7 0 0 0 62 40" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+<text x="2002" y="1006" font-size="22" font-weight="500" fill="#ffffff" text-anchor="middle">baselines</text>
+<text x="2002" y="1032" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">approvals, seen</text>
+<polyline points="112,1092 598,1092" fill="none" stroke="#ffffff" stroke-width="2.6"  marker-end="url(#mw)"/>
+<polyline points="684,892 918,892" fill="none" stroke="#ffffff" stroke-width="2.6"  marker-end="url(#mw)"/>
+<polyline points="1004,884 1238,884" fill="none" stroke="#ffffff" stroke-width="2.6"  marker-end="url(#mw)"/>
+<text x="1122" y="872" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">Detect, Match</text>
+<polyline points="1324,884 1490,884" fill="none" stroke="#ffffff" stroke-width="2.6"  marker-end="url(#mw)"/>
+<text x="1407" y="872" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">Plan</text>
+<polyline points="1720,935 1745,935" fill="none" stroke="#ffffff" stroke-width="2.6"  marker-end="url(#mw)" marker-start="url(#mw)"/>
+<polyline points="684,1100 740,1100 740,920 918,920" fill="none" stroke="#ffffff" stroke-width="2.6"  marker-end="url(#mw)"/>
+<text x="750" y="1010" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="start">approve</text>
+<polyline points="1004,930 1082,930 1082,1092 1006,1092" fill="none" stroke="#ffffff" stroke-width="2.6"  marker-end="url(#mw)"/>
+<text x="1092" y="1010" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="start">after approval</text>
+<polyline points="1004,1100 1238,1100" fill="none" stroke="#ffffff" stroke-width="2.6"  marker-end="url(#mw)"/>
+<text x="1122" y="1088" font-size="17" font-weight="400" fill="#aab4c4" text-anchor="middle">audit</text>
+<polyline points="920,1100 860,1100 860,1240 228,1240 228,500 266,500" fill="none" stroke="#ff4d4d" stroke-width="3.4"  marker-end="url(#mr)"/>
+<text x="300" y="1266" font-size="21" font-weight="700" fill="#ff4d4d" text-anchor="start">cuts 1 to 8 (only after approval)</text>
+<text x="200" y="1345" font-size="19" font-weight="400" fill="#c3ccd9" text-anchor="start">Red squares mark the cut that lands on that service:  1 Cedar forbid · 2 vault deny · 3 cut agent calls · 4 stop sessions · 5 tool Lambda concurrency 0 · 6 role lock · 7 deactivate keys · 8 rotate secret</text>
+<text x="200" y="1378" font-size="19" font-weight="400" fill="#c3ccd9" text-anchor="start">Dashed teal = service group · dotted = not enabled in the demo (a finding of the right shape is sent in) · the red outline is the agent that gets hijacked</text>
+</svg>
